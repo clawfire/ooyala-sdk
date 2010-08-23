@@ -200,6 +200,10 @@ class FacebookSharing
 		$html.="\" codebase=\"http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab\"><param name=\"movie\" value=\"http://player.ooyala.com/player.swf?embedCode=";
 		$html.=$embed_code."&version=2\" /><param name=\"bgcolor\" value=\"".$bgcolor;
 		$html.="\" /><param name=\"allowScriptAccess\" value=\"always\" /><param name=\"allowFullScreen\" value=\"".$allow_fullscreen;
+		$html.="<param name=\"flashvars\" value=\"embedType=noscriptObjectTag&embedCode=".$embed_code."\" />";
+		$html.="<embed src=\"http://player.ooyala.com/player.swf?embedCode=".$embed_code."&version=2\" bgcolor=\"".$bgcolor."\" width=\"".$channel->width."\" height=\"".$channel->height."\" name=\"ooyalaPlayer_6h6n5_gd7jd7q6\" align=\"middle\" play=\"true\" loop=\"false\" allowscriptaccess=\"always\" allowfullscreen=\"true\" type=\"application/x-shockwave-flash\" flashvars=\"&embedCode=".$embed_code."\" pluginspage=\"http://www.adobe.com/go/getflashplayer\"></embed></object></noscript>";
+		
+		return $html;
 	}
 
 
