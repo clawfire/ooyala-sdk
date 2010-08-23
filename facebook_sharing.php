@@ -60,6 +60,83 @@ class FacebookSharing
 
           return $url;
    }
+	/**
+	 * return channel information after get it from ooyala api
+	 *
+	 * @return object
+	 * @author MILAN Thbialt
+	 **/
+	private function get_channel($embed_code)
+	{
+		// Get the url for the passed in partner_code, secret_code and embed_code.
+	       $url				  = $this -> getURL(array("embedCode" => $embed_code.""));
+	       // Get the xml data for the url.
+	       $responseStr = file_get_contents($url);
+	       // Parse the xml document to get the values for creating meta tags
+	  	   $data 				= simplexml_load_string($responseStr);
+
+	  /**
+	   * <summary>
+	   *  Fill the hash map with the key value pairs for the required meta tags
+	   *  by getting the values from the parsed xml
+	   *   </summary>
+	   */
+
+	   // Creating instance of channel object 
+	     $channel = new Channel();
+	       foreach($data->item as $key => $value)
+	       {
+	          $channel->embedCode = $value->embedCode;
+		        if( $channel->embedCode == null || empty( $channel->embedCode )) {
+		        	    // channel embed code is not found.
+			    		error_log("Value not found for: embedCode",3,"FacebookSharingLog.log");
+			    	}
+	          $channel->title = $value->title."";
+	          if( $channel->title == null || empty( $channel->title )) {
+	                // channel title value is not found.
+		    			error_log("Value not found for: channelTitle",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->description = $value->description."";
+	          if( $channel->description == null || empty( $channel->description )) {
+	                // channel description value is not found.
+		    			error_log("Value not found for: channelDescription",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->length = $value->length;
+	          if( $channel->length == null || empty( $channel->length )) {
+	                // channel length value is not found.
+		    			error_log("Value not found for: channelLength",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->uploadedAt =  $value->uploadedAt;
+	          if( $channel->uploadedAt == null || empty( $channel->uploadedAt )) {
+	                // channel uploadedAt value is not found.
+		    			error_log("Value not found for: channelUploadedAt",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->thumbnail = $value->thumbnail."";
+	          if( $channel->thumbnail == null || empty( $channel->thumbnail )) {
+	                // channel thumbnail value is not found.
+		    			error_log("Value not found for: channelThumbnail",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->height = $value->height."";
+	          if( $channel->height == null || empty( $channel->height)) {
+	                // channel height value is not found.
+		    			error_log("Value not found for: channelHeight",3,"FacebookSharingLog.log");
+		    		}
+	          $channel->width = $value->width."";
+	          if( $channel->width == null || empty( $channel->width)) {
+	            	    // channel width value is not found.
+			    		error_log("Value not found for: channelWidth",3,"FacebookSharingLog.log");
+			    	}
+	      }
+	      // Adjust video width to max allowed by Facebook, if required.
+	      if ( $channel->width > FACEBOOK_MAX_WIDTH ) {
+	        $percentWidthReduction = 100 * FACEBOOK_MAX_WIDTH/$channel->width;
+	        $newHeight 			 			 = ($channel->height * $percentWidthReduction / 100);
+	        $channel->width   	   = FACEBOOK_MAX_WIDTH;
+	        $channel->height 			 = $newHeight;
+	      }
+		//return channel object
+		return $channel;
+	}
 
   /**
    * <summary>
@@ -71,72 +148,7 @@ class FacebookSharing
    */
     public function header($embed_code)
      {
-       // Get the url for the passed in partner_code, secret_code and embed_code.
-       $url				  = $this -> getURL(array("embedCode" => $embed_code.""));
-       // Get the xml data for the url.
-       $responseStr = file_get_contents($url);
-       // Parse the xml document to get the values for creating meta tags
-  	   $data 				= simplexml_load_string($responseStr);
-
-  /**
-   * <summary>
-   *  Fill the hash map with the key value pairs for the required meta tags
-   *  by getting the values from the parsed xml
-   *   </summary>
-   */
-
-   // Creating instance of channel object 
-     $channel = new Channel();
-       foreach($data->item as $key => $value)
-       {
-          $channel->embedCode = $value->embedCode;
-	        if( $channel->embedCode == null || empty( $channel->embedCode )) {
-	        	    // channel embed code is not found.
-		    		error_log("Value not found for: embedCode",3,"FacebookSharingLog.log");
-		    	}
-          $channel->title = $value->title."";
-          if( $channel->title == null || empty( $channel->title )) {
-                // channel title value is not found.
-	    			error_log("Value not found for: channelTitle",3,"FacebookSharingLog.log");
-	    		}
-          $channel->description = $value->description."";
-          if( $channel->description == null || empty( $channel->description )) {
-                // channel description value is not found.
-	    			error_log("Value not found for: channelDescription",3,"FacebookSharingLog.log");
-	    		}
-          $channel->length = $value->length;
-          if( $channel->length == null || empty( $channel->length )) {
-                // channel length value is not found.
-	    			error_log("Value not found for: channelLength",3,"FacebookSharingLog.log");
-	    		}
-          $channel->uploadedAt =  $value->uploadedAt;
-          if( $channel->uploadedAt == null || empty( $channel->uploadedAt )) {
-                // channel uploadedAt value is not found.
-	    			error_log("Value not found for: channelUploadedAt",3,"FacebookSharingLog.log");
-	    		}
-          $channel->thumbnail = $value->thumbnail."";
-          if( $channel->thumbnail == null || empty( $channel->thumbnail )) {
-                // channel thumbnail value is not found.
-	    			error_log("Value not found for: channelThumbnail",3,"FacebookSharingLog.log");
-	    		}
-          $channel->height = $value->height."";
-          if( $channel->height == null || empty( $channel->height)) {
-                // channel height value is not found.
-	    			error_log("Value not found for: channelHeight",3,"FacebookSharingLog.log");
-	    		}
-          $channel->width = $value->width."";
-          if( $channel->width == null || empty( $channel->width)) {
-            	    // channel width value is not found.
-		    		error_log("Value not found for: channelWidth",3,"FacebookSharingLog.log");
-		    	}
-      }
-      // Adjust video width to max allowed by Facebook, if required.
-      if ( $channel->width > FACEBOOK_MAX_WIDTH ) {
-        $percentWidthReduction = 100 * FACEBOOK_MAX_WIDTH/$channel->width;
-        $newHeight 			 			 = ($channel->height * $percentWidthReduction / 100);
-        $channel->width   	   = FACEBOOK_MAX_WIDTH;
-        $channel->height 			 = $newHeight;
-      }
+       $channel = get_channel($enbed_code);
       // Construct the meta tags string by substituting the values from the metadata hashmap.
      	$metaTags  = "<meta name=\"medium\" content=\"video\" /> \n";
       $metaTags .= "<meta name=\"title\" content=\"" . $channel->title."\" /> \n";
@@ -168,7 +180,27 @@ class FacebookSharing
     	}
 
     }
-
+	/**
+	 * return the embed html code for embedcode id provide. Can select html embed, with or
+	 * without fallback & pure flash object code.
+	 *
+	 * @return string htmlcode
+	 * @author MILAN Thibault
+	 **/
+	public function embed($embed_code)
+	{
+		$bgcolor="#000000";
+		$allow_fullscreen="true";
+		
+		$channel = get_channel($embed_code);
+		$html ="<script src=\"http://player.ooyala.com/player.js?width=";
+		$html.=$channel->width."&height=".$channel->height;
+		$html.="&embedCode=".$embed_code."\"></script><noscript><object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" id=\"ooyalaPlayer_8tjiu_gd36pogy\" width=\"";
+		$html.=$channel->width."\" height=\"".$channel->height;
+		$html.="\" codebase=\"http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab\"><param name=\"movie\" value=\"http://player.ooyala.com/player.swf?embedCode=";
+		$html.=$embed_code."&version=2\" /><param name=\"bgcolor\" value=\"".$bgcolor;
+		$html.="\" /><param name=\"allowScriptAccess\" value=\"always\" /><param name=\"allowFullScreen\" value=\"".$allow_fullscreen;
+	}
 
 
 ?>
