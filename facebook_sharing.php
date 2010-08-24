@@ -148,7 +148,7 @@ class FacebookSharing
    */
     public function header($embed_code)
      {
-       $channel = get_channel($enbed_code);
+       $channel = $this->get_channel($embed_code);
       // Construct the meta tags string by substituting the values from the metadata hashmap.
      	$metaTags  = "<meta name=\"medium\" content=\"video\" /> \n";
       $metaTags .= "<meta name=\"title\" content=\"" . $channel->title."\" /> \n";
@@ -173,17 +173,20 @@ class FacebookSharing
 	{
 		$bgcolor="#000000";
 		$allow_fullscreen="true";
+		$autoplay=1;
+		$width=640;
+		$height=360;
 		
-		$channel = get_channel($embed_code);
+		$channel = $this->get_channel($embed_code);
 		$html ="<script src=\"http://player.ooyala.com/player.js?width=";
-		$html.=$channel->width."&height=".$channel->height;
-		$html.="&embedCode=".$embed_code."\"></script><noscript><object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" id=\"ooyalaPlayer_8tjiu_gd36pogy\" width=\"";
-		$html.=$channel->width."\" height=\"".$channel->height;
+		$html.=$width."&height=".$height;
+		$html.="&embedCode=".$embed_code."&autoplay=".$autoplay."\"></script><noscript><object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" id=\"ooyalaPlayer_8tjiu_gd36pogy\" width=\"";
+		$html.=$width."\" height=\"".$height;
 		$html.="\" codebase=\"http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab\"><param name=\"movie\" value=\"http://player.ooyala.com/player.swf?embedCode=";
 		$html.=$embed_code."&version=2\" /><param name=\"bgcolor\" value=\"".$bgcolor;
 		$html.="\" /><param name=\"allowScriptAccess\" value=\"always\" /><param name=\"allowFullScreen\" value=\"".$allow_fullscreen;
-		$html.="<param name=\"flashvars\" value=\"embedType=noscriptObjectTag&embedCode=".$embed_code."\" />";
-		$html.="<embed src=\"http://player.ooyala.com/player.swf?embedCode=".$embed_code."&version=2\" bgcolor=\"".$bgcolor."\" width=\"".$channel->width."\" height=\"".$channel->height."\" name=\"ooyalaPlayer_6h6n5_gd7jd7q6\" align=\"middle\" play=\"true\" loop=\"false\" allowscriptaccess=\"always\" allowfullscreen=\"true\" type=\"application/x-shockwave-flash\" flashvars=\"&embedCode=".$embed_code."\" pluginspage=\"http://www.adobe.com/go/getflashplayer\"></embed></object></noscript>";
+		$html.="<param name=\"flashvars\" value=\"embedType=noscriptObjectTag&embedCode=".$embed_code."&autoplay=".$autoplay."\" />";
+		$html.="<embed src=\"http://player.ooyala.com/player.swf?embedCode=".$embed_code."&version=2\" bgcolor=\"".$bgcolor."\" width=\"".$width."\" height=\"".$height."\" name=\"ooyalaPlayer_6h6n5_gd7jd7q6\" align=\"middle\" play=\"true\" loop=\"false\" allowscriptaccess=\"always\" allowfullscreen=\"true\" type=\"application/x-shockwave-flash\" flashvars=\"&embedCode=".$embed_code."&autoplay=".$autoplay."\" pluginspage=\"http://www.adobe.com/go/getflashplayer\"></embed></object></noscript>";
 		
 		return $html;
 	}
