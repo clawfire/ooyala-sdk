@@ -61,8 +61,14 @@ class OoyalaStat
                               'granularity' => 'total',
                               'method' => 'account.videoTotals',
                               'orderBy' => 'plays'}).gsub(',',';')
+    @source_array=@raw_data.scan(/([^;]*);([^;]*);([^;]*);([^;]*)\n/)
+    # cleaning file from exlude embedCode if exclude_it array is not empty
     if !@exclude_it.nil?
-      remove_noise(@raw_data,@exclude_it)
+      remove_noise(@source_array,@exclude_it)
+    end
+    # keep only include embedCode from include_it array
+    if !@include_it.nil?
+      remove_noise(@source_array,!@include_it)
     end
   end
   
@@ -74,14 +80,13 @@ class OoyalaStat
     puts 'done'
   end
   def remove_noise(raw,noise)
-      arr = raw.scan(/([^;]*);([^;]*);([^;]*);([^;]*)\n/)
-      arr.reject! do |row|
+      raw.reject! do |row|
         noise.include? row[0]
       end
-      arr.map! do |row|
+      raw.map! do |row|
         row.join(';')
       end
-      @raw_data=arr.join("\n")
+      @raw_data=raw.join("\n")
   end
   
 end
