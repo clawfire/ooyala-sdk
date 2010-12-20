@@ -72,6 +72,10 @@ class OoyalaStat
     end
   end
   
+  def total(){
+    @source_array
+  }
+  
   def save()
     original=File.new(@file,'w')
     puts 'saving file ...'
@@ -79,7 +83,8 @@ class OoyalaStat
     original.close
     puts 'done'
   end
-  def remove_noise(raw,noise)
+  def remove_noise(noise)
+    raw = @source_array
       raw.reject! do |row|
         noise.include? row[0]
       end
