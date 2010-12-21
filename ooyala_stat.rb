@@ -73,7 +73,10 @@ class OoyalaStat
   end
   
   def total(){
-    @source_array
+    @source_array.each do |row|
+      total+= row[3].to_i
+    end
+    @source_array.insert(0,%w{nil,TOTAL,130})
   }
   
   def save()
